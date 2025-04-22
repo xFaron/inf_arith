@@ -1,0 +1,46 @@
+<project name="MyInfArith" default="run" basedir=".">
+
+    <!-- === Properties === -->
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="build"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="main.class" value="MyInfArithm"/>
+    <property name="jar.name" value="MyInfArith.jar"/>
+
+    <!-- === Clean === -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <!-- === Init directories === -->
+    <target name="init">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+
+    <!-- === Compile === -->
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" destdir="${build.dir}"/>
+    </target>
+
+    <!-- === Run === -->
+    <target name="run" depends="compile">
+        <java classname="${main.class}" classpath="${build.dir}"/>
+    </target>
+
+    <!-- === JAR === -->
+    <target name="jar" depends="compile">
+        <jar destfile="${dist.dir}/${jar.name}" basedir="${build.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- === Run the JAR === -->
+    <target name="run-jar" depends="jar">
+        <java jar="${dist.dir}/${jar.name}" fork="true"/>
+    </target>
+
+</project>
