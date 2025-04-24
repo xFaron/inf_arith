@@ -71,6 +71,22 @@ public class AInteger extends ANumber {
     return new AInteger();
   }
 
+  // Mul by 10
+  private AInteger _shift_left() { 
+    AInteger result = new AInteger(this);
+    result.num_list.add(0, 0);
+    return result;
+  }
+
+  // Div by 10
+  private AInteger _shift_right() {
+    AInteger result = new AInteger(this);
+    result.num_list.remove(0);
+    return result;
+  }
+
+  // Only this private function, it updates the original variable which is being called
+  // This is the case since the number is not valid (if it underwent some operation and was not resolved)
   private AInteger _resolve() {
     AInteger result = new AInteger();
 
@@ -83,8 +99,9 @@ public class AInteger extends ANumber {
       carry = temp_buffer / 10;
     }
 
-    if (carry != 0) {
-      num_list.add(carry);
+    while (carry != 0) {
+      num_list.add(carry % 10);
+      carry /= 10;
     }
 
     int sign = num_list.get(num_list.size() - 1) >= 0 ? 1 : -1;
