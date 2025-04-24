@@ -1,10 +1,12 @@
-<project name="MyInfArith" default="run" basedir=".">
+<project name="MyInfArith" default="test" basedir=".">
 
     <!-- === Properties === -->
     <property name="src.dir" value="src"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
-    <property name="main.class" value="MyInfArithm"/>
+    <property name="test.dir" value="test/"/>
+    <property name="main.class" value="MyInfArith"/>
+    <property name="test.class" value="Tester"/>
     <property name="jar.name" value="MyInfArith.jar"/>
 
     <!-- === Clean === -->
@@ -17,6 +19,7 @@
     <target name="init">
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${test.dir}"/>
     </target>
 
     <!-- === Compile === -->
@@ -24,9 +27,13 @@
         <javac srcdir="${src.dir}" destdir="${build.dir}"/>
     </target>
 
-    <!-- === Run === -->
-    <target name="run" depends="compile">
-        <java classname="${main.class}" classpath="${build.dir}"/>
+    <target name="test_compile" depends="init">
+        <javac srcdir="${test.dir}" destdir="${build.dir}"/>
+    </target>
+
+    <!-- === Test === -->
+    <target name="test" depends="compile,test_compile">
+        <java classname="${test.class}" classpath="${build.dir}" fork="true" failonerror="true"/>
     </target>
 
     <!-- === JAR === -->
