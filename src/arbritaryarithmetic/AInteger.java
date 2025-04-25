@@ -64,7 +64,35 @@ public class AInteger extends ANumber {
   }
   
   public AInteger mul(AInteger num1) {
-    return new AInteger();
+    int shift_down = 0;
+    AInteger result = new AInteger();
+    AInteger temp = new AInteger(num1);
+
+    while (temp.num_list.size() > 0) {
+      int digit = temp.num_list.get(0);
+
+      // System.out.println("Current digit from multiplier: " + digit + ", shift_down: " + shift_down);
+      // System.out.println("TempList");
+      // System.out.println(temp.num_list);
+      // System.out.println("ResultList");
+      // System.out.println(result.num_list);
+
+      int len = this.num_list.size();
+      for (int i = 0; i < len; i++) {
+        try {
+          result.num_list.set(i + shift_down, result.num_list.get(i + shift_down) + this.num_list.get(i) * digit);
+        } catch (Exception e) {
+          result.num_list.add(this.num_list.get(i) * digit);
+        }
+      }
+
+      temp._shift_right();
+      shift_down += 1;
+    }
+
+    result._resolve();
+    System.out.println("Temp after shifting: " + temp);
+    return result;
   }
   
   public AInteger div(AInteger num1) {
@@ -72,17 +100,15 @@ public class AInteger extends ANumber {
   }
 
   // Mul by 10
-  private AInteger _shift_left() { 
-    AInteger result = new AInteger(this);
-    result.num_list.add(0, 0);
-    return result;
+  private void _shift_left() { 
+    this.num_list.add(0, 0);
   }
 
   // Div by 10
-  private AInteger _shift_right() {
-    AInteger result = new AInteger(this);
-    result.num_list.remove(0);
-    return result;
+  private void _shift_right() {
+    if (this.num_list.size() > 0) {
+      this.num_list.remove(0);
+    }
   }
 
   // Only this private function, it updates the original variable which is being called

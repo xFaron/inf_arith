@@ -73,7 +73,7 @@ public class Tester {
           String outputString = outputScanner.nextLine();
           
           try {
-            String resultString = MyInfArith.main(inputString.split(" "));
+            String resultString = MyInfArith.test(inputString.split(" "));
             
             if (resultString.equals(outputString)) {
               LOGGER.info(String.format("[%s:%d] SUCCESS : <%s> <%s> <%s>", fileName, testCaseCount, inputString, outputString, resultString));
