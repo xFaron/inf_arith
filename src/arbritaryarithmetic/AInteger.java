@@ -3,6 +3,7 @@ package arbritaryarithmetic;
 import java.lang.StringBuilder;
 
 public class AInteger extends ANumber {
+  private static String ZERO_DIVISION_ERROR = "ZeroDivisionError";
 
   public AInteger() { 
     super(); 
@@ -60,7 +61,7 @@ public class AInteger extends ANumber {
   }
 
   public AInteger sub(AInteger num1) {
-    return add(num1._negate());
+    return this.add(num1._negate());
   }
   
   public AInteger mul(AInteger num1) {
@@ -70,12 +71,6 @@ public class AInteger extends ANumber {
 
     while (temp.num_list.size() > 0) {
       int digit = temp.num_list.get(0);
-
-      // System.out.println("Current digit from multiplier: " + digit + ", shift_down: " + shift_down);
-      // System.out.println("TempList");
-      // System.out.println(temp.num_list);
-      // System.out.println("ResultList");
-      // System.out.println(result.num_list);
 
       int len = this.num_list.size();
       for (int i = 0; i < len; i++) {
@@ -91,12 +86,42 @@ public class AInteger extends ANumber {
     }
 
     result._resolve();
-    System.out.println("Temp after shifting: " + temp);
     return result;
   }
   
   public AInteger div(AInteger num1) {
-    return new AInteger();
+    if (num1.equals(new AInteger("0")) || num1.equals(new AInteger())) {
+      throw new IllegalArgumentException(ZERO_DIVISION_ERROR);
+    }
+
+    AInteger quotient = new AInteger();
+    AInteger reminder = new AInteger(this);
+    reminder._absolute();
+    AInteger divisor = new AInteger(num1);
+    divisor._absolute();
+
+    boolean isNegative = this._is_negative() ^ num1._is_negative();
+
+    for (int i = 0; i < (reminder.num_list.size() - divisor.num_list.size()); i++) {
+      divisor._shift_left();
+    }
+    return (_div_aux(quotient, reminder, divisor, num1)).mul(new AInteger(isNegative ? "-1" : "1"));
+  }
+
+  private AInteger _div_aux(AInteger quotient, AInteger reminder, AInteger curr_divisor, AInteger divisor) {
+    while (!(reminder.sub(curr_divisor))._is_negative()) {
+      reminder = reminder.sub(curr_divisor);
+      quotient = quotient.add(new AInteger("1"));
+    }
+    
+    if (curr_divisor.equals(divisor)) {
+      return quotient;
+    }
+
+    quotient._shift_left();
+    curr_divisor._shift_right();
+
+    return _div_aux(quotient, reminder, curr_divisor, divisor);
   }
 
   // Mul by 10
@@ -151,6 +176,30 @@ public class AInteger extends ANumber {
     }
 
     return result;
+  }
+
+  private void _absolute() {
+    if (this._is_negative()) {
+      this._negate();
+    }
+  }
+
+  private boolean _is_negative() {
+    this._resolve();
+    for (int i = 0; i < this.num_list.size(); i++) {
+      if (this.num_list.get(i) < 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o instanceof AInteger && ((AInteger) o).num_list.equals(this.num_list)) {
+      return true;
+    }
+    return false;
   }
 
   @Override

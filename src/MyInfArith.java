@@ -4,86 +4,10 @@ public class MyInfArith {
   public static boolean testing = false;
 
   public static void main(String[] args) {
-    if (args.length != 4) {
-      logInfo("USAGE : java MyInfArith (int|float) (add|sub|mul|div) num1 num2");
-      return ;
-    }
-
-    String numType = args[0];
-    String operation = args[1];
-    String num1Str = args[2];
-    String num2Str = args[3];
-
-    try {
-
-      if ("int".equals(numType)) {
-        AInteger num1 = new AInteger(num1Str);
-        AInteger num2 = new AInteger(num2Str);
-
-        AInteger result;
-
-        switch (operation) {
-        case "add":
-          result = num1.add(num2);
-          break;
-        case "sub":
-          result = num1.sub(num2);
-          break;
-        case "mul":
-          result = num1.mul(num2);
-          break;
-        case "div":
-          result = num1.div(num2);
-          break;
-        default:
-          throw new IllegalArgumentException(
-            String.format("ARG ERROR: '%s' is not a supported operation. Use add, sub, mul, or div", operation)
-          );
-        }
-
-        logInfo(String.format("RESULT : %s", result.toString()));
-        return ;
-      } else if ("float".equals(numType)) {
-        AFloat num1 = new AFloat(num1Str);
-        AFloat num2 = new AFloat(num2Str);
-
-        AFloat result;
-
-        switch (operation) {
-        case "add":
-          result = num1.add(num2);
-          break;
-        case "sub":
-          result = num1.sub(num2);
-          break;
-        case "mul":
-          result = num1.mul(num2);
-          break;
-        case "div":
-          result = num1.div(num2);
-          break;
-        default:
-          throw new IllegalArgumentException(
-            String.format("ARG ERROR: '%s' is not a supported operation. Use add, sub, mul, or div", operation)
-          );
-        }
-
-        logInfo(String.format("RESULT : %s", result.toString()));
-        return ;
-      } else {
-        throw new IllegalArgumentException(
-          String.format("ARG ERROR: '%s' is not a valid type. Use 'int' or 'float'", numType)
-        );
-      }
-
-      
-    } catch (Exception e) {
-      logError(e.getMessage());
-      return ;
-    }
+    run_command(args);
   }
 
-  public static String test(String[] args) {
+  public static String run_command(String args[]) {
     if (args.length != 4) {
       logInfo("USAGE : java MyInfArith (int|float) (add|sub|mul|div) num1 num2");
       return new String("USAGE : java MyInfArith (int|float) (add|sub|mul|div) num1 num2");
