@@ -61,7 +61,8 @@ public class AInteger extends ANumber {
   }
 
   public AInteger sub(AInteger num1) {
-    return this.add(num1._negate());
+    AInteger temp = new AInteger(num1);
+    return this.add(temp._negate());
   }
   
   public AInteger mul(AInteger num1) {
@@ -90,98 +91,119 @@ public class AInteger extends ANumber {
   }
   
   public AInteger div(AInteger num1) {
+    // Division By Zero check
     if (num1.equals(new AInteger("0")) || num1.equals(new AInteger())) {
       throw new IllegalArgumentException(ZERO_DIVISION_ERROR);
     }
 
+    // Initialising variables //
     AInteger quotient = new AInteger();
     AInteger reminder = new AInteger(this);
     reminder._absolute();
+
     AInteger divisor = new AInteger(num1);
     divisor._absolute();
 
     boolean isNegative = this._is_negative() ^ num1._is_negative();
+    num1._absolute();
+    // //
 
-    for (int i = 0; i < (reminder.num_list.size() - divisor.num_list.size()); i++) {
+    for (int i = 0; i < (this.num_list.size() - num1.num_list.size()); i++) {
       divisor._shift_left();
     }
-    return (_div_aux(quotient, reminder, divisor, num1)).mul(new AInteger(isNegative ? "-1" : "1"));
+
+    AInteger result = (_div_aux(quotient, reminder, divisor, num1)).mul(new AInteger(isNegative ? "-1" : "1"));
+    return result;
   }
 
   private AInteger _div_aux(AInteger quotient, AInteger reminder, AInteger curr_divisor, AInteger divisor) {
     while (!(reminder.sub(curr_divisor))._is_negative()) {
-      reminder = reminder.sub(curr_divisor);
-      quotient = quotient.add(new AInteger("1"));
+        reminder = reminder.sub(curr_divisor);
+        quotient = quotient.add(new AInteger("1"));
     }
-    
+
     if (curr_divisor.equals(divisor)) {
-      return quotient;
+        if (quotient.num_list.isEmpty()) {
+          quotient = new AInteger("0");
+        }
+
+        return quotient;
     }
 
     quotient._shift_left();
     curr_divisor._shift_right();
 
-    return _div_aux(quotient, reminder, curr_divisor, divisor);
+    AInteger result = _div_aux(quotient, reminder, curr_divisor, divisor);
+    return result;
   }
 
   // Mul by 10
-  private void _shift_left() { 
+  private AInteger _shift_left() { 
     this.num_list.add(0, 0);
+
+    return new AInteger(this);
   }
 
   // Div by 10
-  private void _shift_right() {
+  private AInteger _shift_right() {
     if (this.num_list.size() > 0) {
       this.num_list.remove(0);
     }
+
+    return new AInteger(this);
   }
 
   // Only this private function, it updates the original variable which is being called
   // This is the case since the number is not valid (if it underwent some operation and was not resolved)
   private AInteger _resolve() {
     AInteger result = new AInteger();
+    if (this.num_list.isEmpty()) {
+      this.num_list.add(0);
+    } else {
 
-    int carry = 0;
-    int temp_buffer = 0;
-    
-    for (int i = 0; i < num_list.size(); i++) {
-      temp_buffer = num_list.get(i) + carry;
-      num_list.set(i, temp_buffer % 10);
-      carry = temp_buffer / 10;
-    }
+      int carry = 0;
+      int temp_buffer = 0;
+      
+      for (int i = 0; i < num_list.size(); i++) {
+        temp_buffer = num_list.get(i) + carry;
+        num_list.set(i, temp_buffer % 10);
+        carry = temp_buffer / 10;
+      }
 
-    while (carry != 0) {
-      num_list.add(carry % 10);
-      carry /= 10;
-    }
+      while (carry != 0) {
+        num_list.add(carry % 10);
+        carry /= 10;
+      }
 
-    int sign = num_list.get(num_list.size() - 1) >= 0 ? 1 : -1;
-    
-    for (int i = num_list.size() - 1; i > 0; i--) {
+      int sign = num_list.get(num_list.size() - 1) >= 0 ? 1 : -1;
+      
+      for (int i = num_list.size() - 1; i > 0; i--) {
 
-      if (sign * num_list.get(i-1) < 0 || (num_list.get(i-1) == 0 && i-2 >= 0 && sign * num_list.get(i-2) < 0)) {
-        num_list.set(i, num_list.get(i) - sign);
-        num_list.set(i-1, num_list.get(i-1) + 10 * sign);
+        if (sign * num_list.get(i-1) < 0 || (num_list.get(i-1) == 0 && i-2 >= 0 && sign * num_list.get(i-2) < 0)) {
+          num_list.set(i, num_list.get(i) - sign);
+          num_list.set(i-1, num_list.get(i-1) + 10 * sign);
+        }
       }
     }
+
 
     return new AInteger(this);
   }
 
   private AInteger _negate() {
-    AInteger result = new AInteger(this);
-
-    for (int i = 0; i < result.num_list.size(); i++) {
-      result.num_list.set(i, result.num_list.get(i) * -1);
+    for (int i = 0; i < this.num_list.size(); i++) {
+      this.num_list.set(i, this.num_list.get(i) * -1);
     }
 
-    return result;
+    return new AInteger(this);
   }
 
-  private void _absolute() {
+  private AInteger _absolute() {
     if (this._is_negative()) {
       this._negate();
     }
+
+    return new AInteger(this);
   }
 
   private boolean _is_negative() {
@@ -241,5 +263,4 @@ public class AInteger extends ANumber {
     
     return result.toString();
   }
-
 }
