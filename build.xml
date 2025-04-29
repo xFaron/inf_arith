@@ -1,13 +1,14 @@
 <project name="MyInfArith" default="test" basedir=".">
 
     <!-- === Properties === -->
-    <property name="src.dir" value="src"/>
+    <property name="oogla" value="src"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
     <property name="test.dir" value="test/"/>
     <property name="main.class" value="MyInfArith"/>
     <property name="test.class" value="Tester"/>
     <property name="jar.name" value="MyInfArith.jar"/>
+    <property name="testClean.file" value="test/transfer_valid_cases.py"/>
 
     <!-- === Clean === -->
     <target name="clean">
@@ -24,7 +25,7 @@
 
     <!-- === Compile === -->
     <target name="compile" depends="init">
-        <javac srcdir="${src.dir}" destdir="${build.dir}"/>
+        <javac srcdir="${oogla}" destdir="${build.dir}"/>
     </target>
 
     <target name="test_compile" depends="init">
@@ -34,6 +35,13 @@
     <!-- === Test === -->
     <target name="test" depends="compile,test_compile">
         <java classname="${test.class}" classpath="${build.dir}" fork="true" failonerror="true"/>
+    </target>
+
+    <!-- === Clean Test Cases === -->
+    <target name="test_clean">
+       <exec executable="python3">
+           <arg value="${testClean.file}"/>
+       </exec>
     </target>
 
     <!-- === JAR === -->

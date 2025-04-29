@@ -3,8 +3,6 @@ package arbritaryarithmetic;
 import java.lang.StringBuilder;
 
 public class AInteger extends ANumber {
-  private static String ZERO_DIVISION_ERROR = "ZeroDivisionError";
-
   public AInteger() { 
     super(); 
   }
@@ -137,14 +135,12 @@ public class AInteger extends ANumber {
     return result;
   }
 
-  // Mul by 10
   private AInteger _shift_left() { 
     this.num_list.add(0, 0);
 
     return new AInteger(this);
   }
 
-  // Div by 10
   private AInteger _shift_right() {
     if (this.num_list.size() > 0) {
       this.num_list.remove(0);
@@ -153,8 +149,6 @@ public class AInteger extends ANumber {
     return new AInteger(this);
   }
 
-  // Only this private function, it updates the original variable which is being called
-  // This is the case since the number is not valid (if it underwent some operation and was not resolved)
   private AInteger _resolve() {
     AInteger result = new AInteger();
     if (this.num_list.isEmpty()) {
