@@ -3,6 +3,7 @@ package arbritaryarithmetic;
 import java.lang.StringBuilder;
 
 public class AInteger extends ANumber {
+  // Constructors
   public AInteger() { 
     super(); 
   }
@@ -40,10 +41,12 @@ public class AInteger extends ANumber {
     }
   }
 
+  // Static parse method
   public static AInteger parse(String s) {
     return new AInteger(s);
   }
 
+  // Addition
   public AInteger add(AInteger num1) {
     AInteger result = new AInteger();
 
@@ -62,11 +65,13 @@ public class AInteger extends ANumber {
     return result;
   }
 
+  // Subtraction
   public AInteger sub(AInteger num1) {
     AInteger temp = new AInteger(num1);
     return this.add(temp._negate());
   }
   
+  // Multiplication
   public AInteger mul(AInteger num1) {
     int shift_down = 0;
     AInteger result = new AInteger();
@@ -92,6 +97,7 @@ public class AInteger extends ANumber {
     return result;
   }
   
+  // Division
   public AInteger div(AInteger num1) {
     // Division By Zero check
     if (num1.equals(new AInteger("0")) || num1.equals(new AInteger())) {
@@ -118,6 +124,7 @@ public class AInteger extends ANumber {
     return result;
   }
 
+  // Division helper method
   private AInteger _div_aux(AInteger quotient, AInteger reminder, AInteger curr_divisor, AInteger divisor) {
     while (!(reminder.sub(curr_divisor))._is_negative()) {
       reminder = reminder.sub(curr_divisor);
@@ -139,12 +146,14 @@ public class AInteger extends ANumber {
     return result;
   }
 
+  // Left shift operation (Mul 10)
   private AInteger _shift_left() { 
     this.num_list.add(0, 0);
 
     return new AInteger(this);
   }
 
+  // Right shift operation (Div 10)
   private AInteger _shift_right() {
     if (this.num_list.size() > 0) {
       this.num_list.remove(0);
@@ -153,6 +162,7 @@ public class AInteger extends ANumber {
     return new AInteger(this);
   }
 
+  // The function basically does the carry overing logic for multiplication, addition and subtraction
   private AInteger _resolve() {
     AInteger result = new AInteger();
     if (this.num_list.isEmpty()) {
@@ -188,6 +198,7 @@ public class AInteger extends ANumber {
     return new AInteger(this);
   }
 
+  // Resolve helper method
   private void _resolve_aux(int i, int sign) {
     if (num_list.get(i) == 0) {
       this._resolve_aux(i + 1, sign);
@@ -196,6 +207,7 @@ public class AInteger extends ANumber {
     num_list.set(i-1, num_list.get(i-1) + 10 * sign);
   }
 
+  // Negates current instance
   private AInteger _negate() {
     for (int i = 0; i < this.num_list.size(); i++) {
       this.num_list.set(i, this.num_list.get(i) * -1);
@@ -204,6 +216,7 @@ public class AInteger extends ANumber {
     return new AInteger(this);
   }
 
+  // Abs(this)
   private AInteger _absolute() {
     if (this._is_negative()) {
       this._negate();
@@ -212,6 +225,7 @@ public class AInteger extends ANumber {
     return new AInteger(this);
   }
 
+  // Checks if current instance is negative
   private boolean _is_negative() {
     this._resolve();
     for (int i = 0; i < this.num_list.size(); i++) {

@@ -7,6 +7,7 @@ public class AFloat extends ANumber {
   public static int DECIMAL_LIMIT = 30;
   private int power;
 
+  // Constructors
   public AFloat() { 
     super();
     power = 0;
@@ -62,10 +63,12 @@ public class AFloat extends ANumber {
     this.power = num.power;
   }
 
+  // Static parse method
   public static AFloat parse(String s) {
     return new AFloat(s);
   }
 
+  // Addition
   public AFloat add(AFloat num1) {
     AFloat result = new AFloat();
     int minPower = Math.min(this.power, num1.power);
@@ -90,12 +93,13 @@ public class AFloat extends ANumber {
     return result;
   }
 
-
+  // Subtraction using addition and negate
   public AFloat sub(AFloat num1) {
     AFloat temp = new AFloat(num1);
     return this.add(temp._negate());
   }
   
+  // Multiplication
   public AFloat mul(AFloat num1) {
     int shift_down = 0;
     AFloat result = new AFloat();
@@ -122,6 +126,7 @@ public class AFloat extends ANumber {
     return result;
   }
   
+  // Division
   public AFloat div(AFloat num) {
     AFloat num2 = new AFloat(this);
     AFloat num1 = new AFloat(num);
@@ -141,7 +146,7 @@ public class AFloat extends ANumber {
     resultFloat.num_list = new ArrayList(result.num_list);
 
     resultFloat.power = orginalPowerNum2 - originalPowerNum1 - DECIMAL_LIMIT;
-    System.out.println(resultFloat.power + " = " + orginalPowerNum2 + " - " + originalPowerNum1 + " - " + DECIMAL_LIMIT);
+    // System.out.println(resultFloat.power + " = " + orginalPowerNum2 + " - " + originalPowerNum1 + " - " + DECIMAL_LIMIT);
 
     if (resultFloat.power < -DECIMAL_LIMIT) {
       resultFloat._change_power(-DECIMAL_LIMIT);
@@ -151,7 +156,7 @@ public class AFloat extends ANumber {
     return resultFloat;
   }
 
-  // No bugs
+  // Left shift operation
   private AFloat _shift_left(int n) {
     for (int i = 0; i < n; i++) {
       this.num_list.add(0, 0);
@@ -161,7 +166,7 @@ public class AFloat extends ANumber {
     return shifted;
   }
 
-  // No bugs
+  // Right shift operation
   private AFloat _shift_right(int n) {
 
     for (int i = 0; i < n; i++) {
@@ -174,7 +179,7 @@ public class AFloat extends ANumber {
     return shifted;
   }
 
-  // No bugs
+  // Change the power. Unlike shift operations which act like mul/div 10, this changes the power. Value is the same
   private AFloat _change_power(int n) {
     int delta_power = n - this.power;
     
@@ -190,7 +195,7 @@ public class AFloat extends ANumber {
     return changed;
   }
 
-
+  // Does the carry overing and removal of ending zeroes
   private AFloat _resolve() {
     if (this.num_list.isEmpty()) {
       this.num_list.add(0);
@@ -231,6 +236,7 @@ public class AFloat extends ANumber {
     return new AFloat(this);
   }
 
+  // Resolve helper method
   private void _resolve_aux(int i, int sign) {
     if (num_list.get(i) == 0) {
       this._resolve_aux(i + 1, sign);
@@ -239,6 +245,7 @@ public class AFloat extends ANumber {
     num_list.set(i-1, num_list.get(i-1) + 10 * sign);
   }
 
+  // Negates this instance
   private AFloat _negate() {
     for (int i = 0; i < this.num_list.size(); i++) {
       this.num_list.set(i, this.num_list.get(i) * -1);
@@ -247,6 +254,7 @@ public class AFloat extends ANumber {
     return new AFloat(this);
   }
 
+  // Abs(this)
   private AFloat _absolute() {
     if (this._is_negative()) {
       this._negate();
@@ -255,6 +263,7 @@ public class AFloat extends ANumber {
     return new AFloat(this);
   }
 
+  // Checks if negative
   private boolean _is_negative() {
     this._resolve();
     for (int i = 0; i < this.num_list.size(); i++) {
