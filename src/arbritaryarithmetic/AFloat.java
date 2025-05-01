@@ -62,6 +62,10 @@ public class AFloat extends ANumber {
     this.power = num.power;
   }
 
+  public static AFloat parse(String s) {
+    return new AFloat(s);
+  }
+
   public AFloat add(AFloat num1) {
     AFloat result = new AFloat();
     int minPower = Math.min(this.power, num1.power);

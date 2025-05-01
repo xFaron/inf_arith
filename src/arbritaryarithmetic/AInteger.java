@@ -40,6 +40,10 @@ public class AInteger extends ANumber {
     }
   }
 
+  public static AInteger parse(String s) {
+    return new AInteger(s);
+  }
+
   public AInteger add(AInteger num1) {
     AInteger result = new AInteger();
 
