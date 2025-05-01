@@ -117,14 +117,6 @@ public class AFloat extends ANumber {
     result._resolve();
     return result;
   }
-
-  public static void main(String[] args) {
-    AFloat num1 = new AFloat("0.10");
-    AFloat num2 = new AFloat("10");
-
-    AFloat result = num1.div(num2);
-    System.out.println(result);
-  }
   
   public AFloat div(AFloat num) {
     AFloat num2 = new AFloat(this);
@@ -143,7 +135,13 @@ public class AFloat extends ANumber {
     AInteger result = num2Int.div(num1Int);
     AFloat resultFloat = new AFloat();
     resultFloat.num_list = new ArrayList(result.num_list);
+
     resultFloat.power = orginalPowerNum2 - originalPowerNum1 - DECIMAL_LIMIT;
+    System.out.println(resultFloat.power + " = " + orginalPowerNum2 + " - " + originalPowerNum1 + " - " + DECIMAL_LIMIT);
+
+    if (resultFloat.power < -DECIMAL_LIMIT) {
+      resultFloat._change_power(-DECIMAL_LIMIT);
+    }
 
     resultFloat._resolve();
     return resultFloat;
