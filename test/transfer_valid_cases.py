@@ -2,6 +2,10 @@ import os
 
 OLD_TESTS_PATH = "test/old_tests"
 TESTS_PATH = "test"
+INVERT = False
+
+if INVERT:
+  OLD_TESTS_PATH, TESTS_PATH = TESTS_PATH, OLD_TESTS_PATH
 
 # OLD_TESTS_PATH = path if (path := input(f"Enter Path to old_tests folder [Press Enter for : {OLD_TESTS_PATH}]:")) else OLD_TESTS_PATH
 # TESTS_PATH = path if (path := input(f"Enter Path to tests folder [Press Enter for : {TESTS_PATH}]:")) else TESTS_PATH

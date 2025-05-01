@@ -1,0 +1,7 @@
+float div 10 2
+float div 12 5
+float div 25 9
+float div 1010.1010 10
+float div .002 0.000005
+float div 13 2
+float div .1 1

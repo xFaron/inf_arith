@@ -116,16 +116,16 @@ public class AInteger extends ANumber {
 
   private AInteger _div_aux(AInteger quotient, AInteger reminder, AInteger curr_divisor, AInteger divisor) {
     while (!(reminder.sub(curr_divisor))._is_negative()) {
-        reminder = reminder.sub(curr_divisor);
-        quotient = quotient.add(new AInteger("1"));
+      reminder = reminder.sub(curr_divisor);
+      quotient = quotient.add(new AInteger("1"));
     }
 
     if (curr_divisor.equals(divisor)) {
-        if (quotient.num_list.isEmpty()) {
-          quotient = new AInteger("0");
-        }
+      if (quotient.num_list.isEmpty()) {
+        quotient = new AInteger("0");
+      }
 
-        return quotient;
+      return quotient;
     }
 
     quotient._shift_left();
@@ -157,31 +157,39 @@ public class AInteger extends ANumber {
 
       int carry = 0;
       int temp_buffer = 0;
+      int sign = 1;
       
       for (int i = 0; i < num_list.size(); i++) {
         temp_buffer = num_list.get(i) + carry;
         num_list.set(i, temp_buffer % 10);
         carry = temp_buffer / 10;
+        if (sign * (temp_buffer % 10) < 0) {
+          sign *= -1;
+        }
       }
 
       while (carry != 0) {
         num_list.add(carry % 10);
         carry /= 10;
       }
-
-      int sign = num_list.get(num_list.size() - 1) >= 0 ? 1 : -1;
       
       for (int i = num_list.size() - 1; i > 0; i--) {
-
         if (sign * num_list.get(i-1) < 0 || (num_list.get(i-1) == 0 && i-2 >= 0 && sign * num_list.get(i-2) < 0)) {
-          num_list.set(i, num_list.get(i) - sign);
-          num_list.set(i-1, num_list.get(i-1) + 10 * sign);
+          _resolve_aux(i, sign);
         }
       }
     }
 
 
     return new AInteger(this);
+  }
+
+  private void _resolve_aux(int i, int sign) {
+    if (num_list.get(i) == 0) {
+      this._resolve_aux(i + 1, sign);
+    }
+    num_list.set(i, num_list.get(i) - sign);
+    num_list.set(i-1, num_list.get(i-1) + 10 * sign);
   }
 
   private AInteger _negate() {

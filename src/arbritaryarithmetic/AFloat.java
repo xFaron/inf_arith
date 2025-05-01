@@ -4,6 +4,7 @@ import java.lang.StringBuilder;
 import java.util.ArrayList;
 
 public class AFloat extends ANumber {
+  public static int DECIMAL_LIMIT = 30;
   private int power;
 
   public AFloat() { 
@@ -38,6 +39,14 @@ public class AFloat extends ANumber {
         }
       } else if (c == '.') {
         decimalPointNotDetected = false;
+      } else if (c == 'e') {
+        try {
+          power += Integer.parseInt(s.substring(i+1, s.length()));
+        } catch (Exception e) {
+          throw new IllegalArgumentException("Invalid power in input: " + c);
+        }
+      } else {
+        throw new IllegalArgumentException("Invalid digit in input: " + c);
       }
     }
 
@@ -54,32 +63,15 @@ public class AFloat extends ANumber {
   }
 
   public AFloat add(AFloat num1) {
-    System.out.println("=== Started Addition ===");
-
-    // Print current object state
-    System.out.println("this.num_list: " + this.num_list);
-    System.out.println("this.power: " + this.power);
-
-    // Print incoming object state
-    System.out.println("num1.num_list: " + num1.num_list);
-    System.out.println("num1.power: " + num1.power);
-
     AFloat result = new AFloat();
     int minPower = Math.min(this.power, num1.power);
 
-    System.out.println("Changing powers to minimum of both: " + minPower);
     num1._change_power(minPower);
     this._change_power(minPower);
 
     int lenThis = this.num_list.size();
     int lenNum1 = num1.num_list.size();
     int lenMax = Math.max(lenThis, lenNum1);
-
-    System.out.println("After power change:");
-    System.out.println("this.num_list: " + this.num_list);
-    System.out.println("this.power: " + this.power);
-    System.out.println("num1.num_list: " + num1.num_list);
-    System.out.println("num1.power: " + num1.power);
 
     result.power = minPower;
 
@@ -88,19 +80,9 @@ public class AFloat extends ANumber {
       int val_num1 = (i < lenNum1) ? num1.num_list.get(i) : 0;
       int sum = val_this + val_num1;
       result.num_list.add(sum);
-
-      System.out.printf("Index %d: this = %d, num1 = %d, sum = %d%n", i, val_this, val_num1, sum);
-      System.out.println("Current status:");
-      System.out.println("this.num_list: " + this.num_list);
-      System.out.println("num1.num_list: " + num1.num_list);
-
     }
 
-    System.out.println("Before resolving result: " + result.num_list + " | power: " + result.power);
     result._resolve();
-    System.out.println("After resolving result: " + result.num_list + " | power: " + result.power);
-
-    System.out.println("=== Finished Addition ===");
     return result;
   }
 
@@ -131,55 +113,40 @@ public class AFloat extends ANumber {
       shift_down += 1;
     }
 
+    result.power = this.power + num1.power;
     result._resolve();
     return result;
   }
-  
-  public AFloat div(AFloat num1) {
-    // Division By Zero check
-    if (num1.equals(new AFloat("0")) || num1.equals(new AFloat())) {
-      throw new IllegalArgumentException(ZERO_DIVISION_ERROR);
-    }
 
-    // Initialising variables //
-    AFloat quotient = new AFloat();
-    AFloat reminder = new AFloat(this);
-    reminder._absolute();
+  public static void main(String[] args) {
+    AFloat num1 = new AFloat("0.10");
+    AFloat num2 = new AFloat("10");
 
-    AFloat divisor = new AFloat(num1);
-    divisor._absolute();
-
-    boolean isNegative = this._is_negative() ^ num1._is_negative();
-    num1._absolute();
-    // //
-
-    for (int i = 0; i < (this.num_list.size() - num1.num_list.size()); i++) {
-      divisor._shift_left(1);
-    }
-
-    AFloat result = (_div_aux(quotient, reminder, divisor, num1)).mul(new AFloat(isNegative ? "-1" : "1"));
-    return result;
+    AFloat result = num1.div(num2);
+    System.out.println(result);
   }
+  
+  public AFloat div(AFloat num) {
+    AFloat num2 = new AFloat(this);
+    AFloat num1 = new AFloat(num);
+    
+    int originalPowerNum1 = num1.power;
+    int orginalPowerNum2 = num2.power;
 
-  private AFloat _div_aux(AFloat quotient, AFloat reminder, AFloat curr_divisor, AFloat divisor) {
-    while (!(reminder.sub(curr_divisor))._is_negative()) {
-      reminder = reminder.sub(curr_divisor);
-      quotient = quotient.add(new AFloat("1"));
-    }
+    num2._shift_left(DECIMAL_LIMIT);
 
-    if (curr_divisor.equals(divisor)) {
-      if (quotient.num_list.isEmpty()) {
-        quotient = new AFloat("0");
-      }
+    AInteger num2Int = new AInteger();
+    num2Int.num_list = new ArrayList(num2.num_list);
+    AInteger num1Int = new AInteger();
+    num1Int.num_list = new ArrayList(num1.num_list);
 
-      return quotient;
-    }
+    AInteger result = num2Int.div(num1Int);
+    AFloat resultFloat = new AFloat();
+    resultFloat.num_list = new ArrayList(result.num_list);
+    resultFloat.power = orginalPowerNum2 - originalPowerNum1 - DECIMAL_LIMIT;
 
-    quotient._shift_left(1);
-    curr_divisor._shift_right(1);
-
-    AFloat result = _div_aux(quotient, reminder, curr_divisor, divisor);
-    return result;
+    resultFloat._resolve();
+    return resultFloat;
   }
 
   // No bugs
@@ -208,7 +175,7 @@ public class AFloat extends ANumber {
   // No bugs
   private AFloat _change_power(int n) {
     int delta_power = n - this.power;
-    System.out.println("The numbers > delta_power:" + delta_power + "|n: " + n + "|power: " + this.power);
+    
     if (delta_power > 0) {
       this._shift_right(delta_power);
     } else if (delta_power < 0) {
@@ -245,17 +212,11 @@ public class AFloat extends ANumber {
         carry /= 10;
       }
 
-      boolean changes = false;
-      do {
-        for (int i = num_list.size() - 1; i > 0; i--) {
-          changes = false;
-          if (sign * num_list.get(i-1) < 0 || (num_list.get(i-1) == 0 && i-2 >= 0 && sign * num_list.get(i-2) < 0)) {
-            num_list.set(i, num_list.get(i) - sign);
-            num_list.set(i-1, num_list.get(i-1) + 10 * sign);
-            changes = true;
-          }
+      for (int i = num_list.size() - 1; i > 0; i--) {
+        if (sign * num_list.get(i-1) < 0 || (num_list.get(i-1) == 0 && i-2 >= 0 && sign * num_list.get(i-2) < 0)) {
+          _resolve_aux(i, sign);
         }
-      } while (changes);
+      }
       
     }
 
@@ -266,6 +227,14 @@ public class AFloat extends ANumber {
 
     this._change_power(this.power + extraZeroes);
     return new AFloat(this);
+  }
+
+  private void _resolve_aux(int i, int sign) {
+    if (num_list.get(i) == 0) {
+      this._resolve_aux(i + 1, sign);
+    }
+    num_list.set(i, num_list.get(i) - sign);
+    num_list.set(i-1, num_list.get(i-1) + 10 * sign);
   }
 
   private AFloat _negate() {
@@ -304,8 +273,6 @@ public class AFloat extends ANumber {
 
   @Override
   public String toString() {
-    System.out.println("Started printing");
-    System.out.println("Trying to print: " + this.num_list + " | power: " + this.power);
     if (this.num_list.isEmpty()) {
       return "0.0";
     }
@@ -325,11 +292,6 @@ public class AFloat extends ANumber {
     }
     
     boolean leadingZeros = true;
-    // int endPower = Math.min(power * -1 + this.num_list.size() + 1, -1);
-    // int startPower = Math.max(0, this.power + this.num_list.size() - 1);
-
-    System.out.println("Number List: " + this.num_list);
-    System.out.println("Power: " + this.power);
 
     for (int i = Math.max(num_list.size() + this.power, 0); i >= Math.min(-1, this.power); i--) {
       int digit;
@@ -357,7 +319,6 @@ public class AFloat extends ANumber {
       return "0.0";
     }
     
-    System.out.println("Finished printing");
     return result.toString();
   }
 }
