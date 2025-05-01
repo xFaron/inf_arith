@@ -1,8 +1,6 @@
-**Arbitrary Precision Arithmetic Library**
+# **Arbitrary Precision Arithmetic Library**
 
 An easy-to-use Java library for performing arbitrary-precision integer and floating‑point arithmetic, complete with a built-in testing framework and Ant-based build system.
-
----
 
 ## Table of Contents
 
@@ -19,7 +17,6 @@ An easy-to-use Java library for performing arbitrary-precision integer and float
 - [License](#license)
 - [Authors](#authors)
 
----
 
 ## Features
 
@@ -75,7 +72,6 @@ To execute the JAR:
 ant run-jar
 ```
 
----
 
 ## Folder Structure
 
@@ -152,8 +148,4 @@ Distributed under the MIT License. See `LICENSE` for more details.
 
 ## Authors
 
-- **Harikrishna S** – *Initial work* – [xFaron](https://github.com/xFaron)
-
----
-
-
+- **Harikrishna S** – [xFaron](https://github.com/xFaron)
