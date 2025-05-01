@@ -53,9 +53,4 @@
         </jar>
     </target>
 
-    <!-- === Run the JAR === -->
-    <target name="run-jar" depends="jar">
-        <java jar="${dist.dir}/${jar.name}" fork="true"/>
-    </target>
-
 </project>
